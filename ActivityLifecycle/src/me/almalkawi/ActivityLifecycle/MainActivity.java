@@ -2,9 +2,16 @@ package me.almalkawi.ActivityLifecycle;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+    private static final String STATE_COUNTER = "state_counter";
+
+    private int mCounter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -14,6 +21,26 @@ public class MainActivity extends Activity {
         } else {
             Toast.makeText(this, "onCreate with non-null Bundle", Toast.LENGTH_SHORT).show();
         }
+
+        setContentView(R.layout.main);
+
+        final Button finishButton = (Button) findViewById(R.id.finish);
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        final Button incrementButton = (Button) findViewById(R.id.increment);
+        final EditText counterEditText = (EditText) findViewById(R.id.counter);
+        incrementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCounter += 1;
+                counterEditText.setText(String.valueOf(mCounter));
+            }
+        });
     }
 
     @Override
@@ -22,7 +49,7 @@ public class MainActivity extends Activity {
         super.onRestoreInstanceState(savedInstanceState);
         Toast.makeText(this, "onRestoreInstanceState", Toast.LENGTH_SHORT).show();
 
-//        mCurrentScore = savedInstanceState.getInt(STATE_SCORE);
+        mCounter = savedInstanceState.getInt(STATE_COUNTER);
     }
 
     @Override
@@ -45,11 +72,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // Always call the superclass so it can save the view hierarchy state
+        // Call the superclass to save the view hierarchy state (only Views with ID are saved)
         super.onSaveInstanceState(outState);
         Toast.makeText(this, "onSaveInstanceState", Toast.LENGTH_SHORT).show();
 
-//        savedInstanceState.putInt(STATE_SCORE, mCurrentScore);
+        outState.putInt(STATE_COUNTER, mCounter);
     }
 
     @Override
