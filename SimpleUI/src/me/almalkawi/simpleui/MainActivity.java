@@ -9,6 +9,7 @@ import android.widget.EditText;
 public class MainActivity extends Activity {
     public static final String EXTRA_MESSAGE = "SimpleUI_MESSAGE";
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
