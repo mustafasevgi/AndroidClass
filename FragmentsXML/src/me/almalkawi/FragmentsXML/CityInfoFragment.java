@@ -30,7 +30,6 @@ public class CityInfoFragment extends Fragment {
         final View ui = inflater.inflate(R.layout.city_info_fragment, container, false);
         final TextView cityName = (TextView) ui.findViewById(R.id.city_name);
         cityName.setText("Chicago");
-
         return ui; // If the fragment has no UI, we return null.
     }
 

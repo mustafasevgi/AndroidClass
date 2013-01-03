@@ -14,7 +14,6 @@ public class CityImageFragment extends Fragment {
         final View ui = inflater.inflate(R.layout.city_image_fragment, container, false);
         final ImageView cityImage = (ImageView) ui.findViewById(R.id.city_image);
         cityImage.setImageResource(R.drawable.chicago);
-
         return ui; // If the fragment has no UI, we return null.
     }
 }
