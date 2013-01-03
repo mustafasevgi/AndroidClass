@@ -12,13 +12,15 @@ import java.util.ArrayList;
 
 public class CityListActivity extends Activity {
     private ListView mListView;
+    private CityArrayAdapter mCityArrayAdapter;
+    private ArrayList<City> cities;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.city_list);
+        setContentView(R.layout.city_list_activity);
 
         // Data
-        final ArrayList<City> cities = new ArrayList<City>();
+        cities = new ArrayList<City>();
         cities.add(new City("San Francisco", "sf", "http://en.wikipedia.org/wiki/San_Francisco"));
         cities.add(new City("Seattle", "seattle", "http://en.wikipedia.org/wiki/Seattle"));
         cities.add(new City("Chicago", "chicago", "http://en.wikipedia.org/wiki/Chicago"));
@@ -26,10 +28,10 @@ public class CityListActivity extends Activity {
         cities.add(new City("Mumbai", "mumbai", "http://en.wikipedia.org/wiki/Mumbai"));
         cities.add(new City("Moscow", "moscow", "http://en.wikipedia.org/wiki/Moscow"));
         cities.add(new City("Sydney", "sydney", "http://en.wikipedia.org/wiki/Sydney"));
-        cities.add(new City("Tokyo", "tokyo", "http://en.wikipedia.org/wiki/Tokyo"));
 
         mListView = (ListView) findViewById(R.id.city_list);
-        mListView.setAdapter(new CityArrayAdapter(this, R.layout.city_row_item, cities));
+        mCityArrayAdapter = new CityArrayAdapter(this, R.layout.city_row_item, cities);
+        mListView.setAdapter(mCityArrayAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -39,5 +41,10 @@ public class CityListActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void addCity(View view) {
+        cities.add(new City("Tokyo", "tokyo", "http://en.wikipedia.org/wiki/Tokyo"));
+        mCityArrayAdapter.notifyDataSetChanged();
     }
 }
