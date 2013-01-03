@@ -26,7 +26,6 @@ public class CityInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Toast.makeText(getActivity(), "Fragment: onCreateView", Toast.LENGTH_SHORT).show();
-
         final View ui = inflater.inflate(R.layout.city_info_fragment, container, false);
         final TextView cityName = (TextView) ui.findViewById(R.id.city_name);
         cityName.setText("Chicago");
