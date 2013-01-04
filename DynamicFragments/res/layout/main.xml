@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Show image"
+                android:text="Add fragment"
                 android:enabled="true"
                 android:onClick="showCity"/>
 
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Hide image"
+                android:text="Del fragment"
                 android:enabled="false"
                 android:onClick="hideCity"/>
 
