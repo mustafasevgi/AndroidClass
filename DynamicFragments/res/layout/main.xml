@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <fragment android:name="me.almalkawi.DynamicFragments.CityInfoFragment"
+              android:id="@+id/image_fragment"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_gravity="center_horizontal">
+
+        <Button android:id="@+id/show_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Show image"
+                android:enabled="true"
+                android:onClick="showCity"/>
+
+        <Button android:id="@+id/hide_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Hide image"
+                android:enabled="false"
+                android:onClick="hideCity"/>
+
+    </LinearLayout>
+
+    <FrameLayout android:id="@+id/image_container"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>
