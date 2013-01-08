@@ -51,13 +51,13 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         todoListView.setAdapter(mToDoItemsAdapter);
 
         // CusrorLoader ensure queries are performed asynchronously.
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, this); // // Third parameter is reference to callbacks
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this); // // Third parameter is reference to callbacks
     }
 
     public void onNewItemAdded(String newItem) {
@@ -70,14 +70,16 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         final ContentResolver cr = getContentResolver();
         // The URI specifies the content provider.
         cr.insert(ToDoContentProvider.CONTENT_URI, values);
-        getLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
+    // Called when the loader is initliazed.
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, ToDoContentProvider.CONTENT_URI,
                 null, null, null, null);
     }
 
+    // Called when the Loader Manager has completed the async query.
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mTodoItemsList.clear();
 
