@@ -50,6 +50,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         // Bind the array adapter to the ListView.
         todoListView.setAdapter(mToDoItemsAdapter);
 
+        // CusrorLoader ensure queries are performed asynchronously.
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -60,6 +61,8 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
     }
 
     public void onNewItemAdded(String newItem) {
+        //  Each ContentValue represents a single table row
+        //  as a map of column names to values.
         final ContentValues values = new ContentValues();
         values.put(ToDoContentProvider.KEY_TASK, newItem);
 
@@ -76,9 +79,13 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mTodoItemsList.clear();
 
+        // Gets index of the column given a name.
         final int keyTaskIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.KEY_TASK);
-        while (cursor.moveToNext()) {
-            final ToDoItem newItem = new ToDoItem(cursor.getString(keyTaskIndex));
+
+        // Database queries are returned as Cursor objects.
+        // Cursors are pointers to the result set within the underlying data.
+        while (cursor.moveToNext()) { // Moves cursor to next row
+            final ToDoItem newItem = new ToDoItem(cursor.getString(keyTaskIndex)); // Extract column data from cursor
             mTodoItemsList.add(newItem);
         }
         mToDoItemsAdapter.notifyDataSetChanged();

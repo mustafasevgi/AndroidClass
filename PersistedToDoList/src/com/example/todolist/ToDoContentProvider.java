@@ -17,21 +17,22 @@ import android.text.TextUtils;
 // - Provides an interface for publishing and consuming data,
 //   based around a simple URI addressing model using the
 //   content:// schema.
-public class ToDoContentProvider extends ContentProvider {
+public class ToDoContentProvider extends ContentProvider { // Abstracts the underlying data layer
     public static final Uri CONTENT_URI =
             Uri.parse("content://com.example.todoprovider/todoitems");
 
+    // Practice is to create a public field for each column in the table.
     public static final String KEY_ID = "_id";
     public static final String KEY_TASK = "task";
 
-    private MySQLiteOpenHelper mDBOpenHelper;
+    private ToDoDBSQLiteOpenHelper mDBOpenHelper;
 
     @Override
     public boolean onCreate() {
         // Construct the underlying database.
-        mDBOpenHelper = new MySQLiteOpenHelper(getContext(),
-                MySQLiteOpenHelper.DATABASE_NAME, null,
-                MySQLiteOpenHelper.DATABASE_VERSION);
+        mDBOpenHelper = new ToDoDBSQLiteOpenHelper(getContext(),
+                ToDoDBSQLiteOpenHelper.DATABASE_NAME, null,
+                ToDoDBSQLiteOpenHelper.DATABASE_VERSION);
         return true;
     }
 
@@ -70,7 +71,7 @@ public class ToDoContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(MySQLiteOpenHelper.TABLE_NAME);
+        queryBuilder.setTables(ToDoDBSQLiteOpenHelper.TABLE_NAME);
 
         // If this is a row query, limit the result set to the passed in row.
         switch (uriMatcher.match(uri)) {
@@ -115,7 +116,7 @@ public class ToDoContentProvider extends ContentProvider {
         }
 
         // Execute the deletion.
-        int deleteCount = db.delete(MySQLiteOpenHelper.TABLE_NAME, selection, selectionArgs);
+        int deleteCount = db.delete(ToDoDBSQLiteOpenHelper.TABLE_NAME, selection, selectionArgs);
 
         // Notify any observers of the change in the data set.
         getContext().getContentResolver().notifyChange(uri, null);
@@ -129,7 +130,7 @@ public class ToDoContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
 
         // Insert the values into the table
-        long id = db.insert(MySQLiteOpenHelper.TABLE_NAME, null, values);
+        long id = db.insert(ToDoDBSQLiteOpenHelper.TABLE_NAME, null, values);
 
         if (id > -1) {
             // Construct and return the URI of the newly inserted row.
@@ -164,7 +165,7 @@ public class ToDoContentProvider extends ContentProvider {
         }
 
         // Perform the update.
-        final int updateCount = db.update(MySQLiteOpenHelper.TABLE_NAME,
+        final int updateCount = db.update(ToDoDBSQLiteOpenHelper.TABLE_NAME,
                 values, selection, selectionArgs);
 
         // Notify any observers of the change in the data set.
@@ -173,21 +174,23 @@ public class ToDoContentProvider extends ContentProvider {
         return updateCount;
     }
 
-    private static class MySQLiteOpenHelper extends SQLiteOpenHelper {
-
-        private static final String DATABASE_NAME = "todo.db";
-        private static final int DATABASE_VERSION = 1;
+    // SQLite is implemented as a library, rather than running as a separate process.
+    // Each SQLite database is an integrated part of the application that created it.
+    // SQLite is extremely reliable.
+    private static class ToDoDBSQLiteOpenHelper extends SQLiteOpenHelper {
+        private static final String DATABASE_NAME = "todo.db"; // Will be stored in /data/data/<package>/databases
+        private static final int DATABASE_VERSION = 1; // Important for upgrade paths
         private static final String TABLE_NAME = "todoItemTable";
 
-        public MySQLiteOpenHelper(Context context, String name,
-                                  CursorFactory factory, int version) {
+        public ToDoDBSQLiteOpenHelper(Context context, String name,
+                                      CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
 
         // SQL statement to create a new database.
-        private static final String CREATE_TABLE = "create table " +
-                TABLE_NAME + " (" + KEY_ID + " integer primary key autoincrement, " +
-                KEY_TASK + " text not null);";
+        private static final String CREATE_TABLE = "create table " + TABLE_NAME
+                + " (" + KEY_ID + " integer primary key autoincrement, "
+                + KEY_TASK + " text not null);";
 
         // Called when no database exists in disk and the helper class needs to create a new one.
         @Override
