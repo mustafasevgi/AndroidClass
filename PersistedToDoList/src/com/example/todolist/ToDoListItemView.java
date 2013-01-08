@@ -25,8 +25,8 @@ public class ToDoListItemView extends TextView {
 
         // Anti-aliasing is important when drawing text as anti-aliased
         // text is significantly easier to read.
-        final Paint marginPaine = new Paint(Paint.ANTI_ALIAS_FLAG); // Margin paint brush
-        marginPaine.setColor(resources.getColor(R.color.margin_color));
+        final Paint marginPaint = new Paint(Paint.ANTI_ALIAS_FLAG); // Margin paint brush
+        marginPaint.setColor(resources.getColor(R.color.margin_color));
 
         final Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG); // Line paint brush
         linePaint.setColor(resources.getColor(R.color.line_color));
@@ -52,7 +52,7 @@ public class ToDoListItemView extends TextView {
         final int marginY1 = 0;
         final int marginX2 = marginWidth;
         final int marginY2 = getMeasuredHeight();
-        canvas.drawLine(marginX1, marginY1, marginX2, marginY2, marginPaine);
+        canvas.drawLine(marginX1, marginY1, marginX2, marginY2, marginPaint);
 
         // Move the text across from the margin
         canvas.translate(marginWidth, 0);
