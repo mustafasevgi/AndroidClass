@@ -109,6 +109,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         if (id > -1) {
             // Construct and return the URI of the newly inserted row.
+            // ContentUris.withAppendedId appends the ID to the CONTENT_URI.
             final Uri insertedId = ContentUris.withAppendedId(CONTENT_URI, id);
 
             // Notify any observers of the change in the data set.

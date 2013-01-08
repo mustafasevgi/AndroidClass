@@ -68,6 +68,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
 
         // Content Provider data are consumed using a Content Resolver
         final ContentResolver cr = getContentResolver();
+        // The URI specifies the content provider.
         cr.insert(ToDoContentProvider.CONTENT_URI, values);
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -81,13 +82,13 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         mTodoItemsList.clear();
 
         // Gets index of the column given a name.
-        final int keyTaskIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.KEY_TASK);
+        final int taskKeyIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.KEY_TASK);
 
         // Database queries are returned as Cursor objects.
         // Cursors are pointers to the result set within the underlying data.
         // Here is how we iterate over the cursor rows.
         while (cursor.moveToNext()) { // Moves cursor to next row, cursor is initialized at before first.
-            final ToDoItem newItem = new ToDoItem(cursor.getString(keyTaskIndex)); // Extract column data from cursor
+            final ToDoItem newItem = new ToDoItem(cursor.getString(taskKeyIndex)); // Extract column data from cursor
             mTodoItemsList.add(newItem);
         }
         mToDoItemsAdapter.notifyDataSetChanged();
