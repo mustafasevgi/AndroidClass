@@ -68,7 +68,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mDBOpenHelper.getReadableDatabase(); // Get readable instance to db
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(ToDoDBSQLiteOpenHelper.TABLE_NAME);
@@ -93,7 +93,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
@@ -126,8 +126,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // Get write database instance.
-        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // Insert the values into the table
         long id = db.insert(ToDoDBSQLiteOpenHelper.TABLE_NAME, null, values);
@@ -148,7 +147,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
@@ -192,18 +191,18 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
                 + " (" + KEY_ID + " integer primary key autoincrement, "
                 + KEY_TASK + " text not null);";
 
-        // Called when no database exists in disk and the helper class needs to create a new one.
+        // Called when no database exists in disk.
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(CREATE_TABLE);
         }
 
-        // Called when there is a database version mismatch, meaning that the version
-        // of the database on disk needs to be upgraded to the current version.
+        // Called when the app database version mismatches the disk database version.
+        // Used to upgrade db the current version.
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // The simplest case is to drop the old table and create a new one.
-            db.execSQL("DROP TABLE IF IT EXISTS " + TABLE_NAME);
+            db.execSQL("DROP TABLE IF IT EXISTS " + TABLE_NAME); // Migrate existing data if necessary before this.
             // Create a new one.
             onCreate(db);
         }
