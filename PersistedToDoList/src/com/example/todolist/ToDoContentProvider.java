@@ -13,6 +13,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
 
+// - Defined in manifest
+// - Provides an interface for publishing and consuming data,
+//   based around a simple URI addressing model using the
+//   content:// schema.
 public class ToDoContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI =
             Uri.parse("content://com.example.todoprovider/todoitems");
