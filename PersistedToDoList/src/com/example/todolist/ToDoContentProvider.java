@@ -23,7 +23,7 @@ import android.text.TextUtils;
 public class ToDoContentProvider extends ContentProvider { // Abstracts the underlying data layer
     // Data path to the primary content.
     public static final Uri CONTENT_URI =
-            Uri.parse("content://com.example.todoprovider/todoitems");
+            Uri.parse("content://com.example.todolist.todoprovider/todoitems");
 
     private static final int ALLROWS = 1;
     private static final int SINGLE_ROW = 2;
@@ -33,8 +33,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     // URI ending in 'todoitems/[rowID]' corresponds to a single row.
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI("com.example.todoprovider", "todoitems", ALLROWS);
-        uriMatcher.addURI("com.example.todoprovider", "todoitems/#", SINGLE_ROW);
+        uriMatcher.addURI("com.example.todolist.todoprovider", "todoitems", ALLROWS);
+        uriMatcher.addURI("com.example.todolist.todoprovider", "todoitems/#", SINGLE_ROW);
     }
 
     // Practice is to create a public field for each column in the table.
@@ -80,6 +80,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final Cursor cursor = queryBuilder.query(db, projection, selection,
                 selectionArgs, null, null, sortOrder);
 
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         // Return the result cursor.
         return cursor;
     }
@@ -113,7 +115,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
             final Uri insertedId = ContentUris.withAppendedId(CONTENT_URI, id);
 
             // Notify any observers of the change in the data set.
-            getContext().getContentResolver().notifyChange(insertedId, null);
+            getContext().getContentResolver().notifyChange(CONTENT_URI, null);
 
             return insertedId;
         } else {

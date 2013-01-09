@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -51,13 +52,13 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         todoListView.setAdapter(mToDoItemsAdapter);
 
         // CusrorLoader ensure queries are performed asynchronously.
-        getLoaderManager().initLoader(0, null, this); // // Third parameter is reference to callbacks
+        getLoaderManager().initLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(0, null, this); // // Third parameter is reference to callbacks
+        getLoaderManager().restartLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
     public void onNewItemAdded(String newItem) {
@@ -70,7 +71,6 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         final ContentResolver cr = getContentResolver();
         // The URI specifies the content provider.
         cr.insert(ToDoContentProvider.CONTENT_URI, values);
-        getLoaderManager().restartLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
     // Called when the loader is initliazed.
@@ -97,5 +97,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
     }
 
     public void onLoaderReset(Loader<Cursor> loader) {
+        mTodoItemsList.clear();
+        mToDoItemsAdapter.notifyDataSetChanged();
     }
 }

@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <provider android:name=".ToDoContentProvider"
-                  android:authorities="com.example.todoprovider"/>
+                  android:authorities="com.example.todolist.todoprovider"/>
     </application>
 
 </manifest>
