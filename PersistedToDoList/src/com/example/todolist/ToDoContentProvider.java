@@ -1,6 +1,7 @@
 package com.example.todolist;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -87,14 +88,14 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     }
 
     @Override
-    public String getType(Uri uri) { // Must implemented to identify data retured by query().
+    public String getType(Uri uri) { // Must implemented if you implement query..
         // Return a string that identifies the MIME type for a Content Provider URI.
         switch (uriMatcher.match(uri)) {
             case ALLROWS: {
-                return "vnd.android.cursor.dir/vnd.example.todos";
+                return ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.example.todos";
             }
             case SINGLE_ROW: {
-                return "vnd.android.cursor.item/vnd.example.todos";
+                return ContentResolver.CURSOR_ITEM_BASE_TYPE +  "/vnd.example.todos";
             }
             default: {
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -112,12 +113,12 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         if (id > -1) {
             // Construct and return the URI of the newly inserted row.
             // ContentUris.withAppendedId appends the ID to the CONTENT_URI.
-            final Uri insertedId = ContentUris.withAppendedId(CONTENT_URI, id);
+            final Uri rowUri = ContentUris.withAppendedId(CONTENT_URI, id);
 
             // Notify any observers of the change in the data set.
             getContext().getContentResolver().notifyChange(CONTENT_URI, null);
 
-            return insertedId;
+            return rowUri;
         } else {
             return null;
         }
