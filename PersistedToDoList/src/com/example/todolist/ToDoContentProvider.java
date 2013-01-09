@@ -17,25 +17,34 @@ import android.text.TextUtils;
 // - Provides an interface for publishing and consuming data,
 //   based around a simple URI addressing model using the
 //   content:// schema.
+// - ContentProvider is a data access object (http://en.wikipedia.org/wiki/Data_access_object)
 // - Defined in manifest:
 //   Authorities tag define the base URI of the Provider’s authority.
 //   Provider’s authority is used by the Content Resolver as an address
 //   and used to find the database that we want to interact with.
 public class ToDoContentProvider extends ContentProvider { // Abstracts the underlying data layer
-    // Data path to the primary content.
-    public static final Uri CONTENT_URI =
-            Uri.parse("content://com.example.todolist.todoprovider/todoitems");
+    // The authority portion of the URI (matches what is defined in manifest).
+    public static final String AUTHORITY = "com.example.todolist.todoprovider";
+    // BASE_URI is the URI that identifies the ContentProvider.
+    public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
+    public static final String TODO_ITEMS_PATH = "todoitems";
+    public static final String TODO_ITEMS_PATH_FOR_ID = TODO_ITEMS_PATH + "/*";
+
+    // Data path to the primary content.
+    public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(TODO_ITEMS_PATH).build();
+
+    // Maps a URI path to an integer.
+    private static final UriMatcher uriMatcher;
     private static final int ALLROWS = 1;
     private static final int SINGLE_ROW = 2;
-    private static final UriMatcher uriMatcher; // Parses URIs and determines their form.
 
     // URI ending in 'todoitems' corresponds to a request for all items
-    // URI ending in 'todoitems/[rowID]' corresponds to a single row.
+    // URI ending in 'todoitems/[rowID]' corresponds to a request for a single row.
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI("com.example.todolist.todoprovider", "todoitems", ALLROWS);
-        uriMatcher.addURI("com.example.todolist.todoprovider", "todoitems/#", SINGLE_ROW);
+        uriMatcher.addURI(AUTHORITY, "todoitems", ALLROWS);
+        uriMatcher.addURI(AUTHORITY, "todoitems/#", SINGLE_ROW);
     }
 
     // Practice is to create a public field for each column in the table.
