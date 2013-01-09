@@ -87,15 +87,20 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         return cursor;
     }
 
+    // Must be implemented if you implement query.
+    // Returns a string that identifies the MIME type for a Content Provider URI.
+    // MIME types have two distinct parts: type/subtype. However, since query can only return
+    // cursors, the type should always be CURSOR_DIR_BASE_TYPE OR CURSOR_ITEM_BASE_TYPE.
+    // The subtype is usually unique to your application.
     @Override
-    public String getType(Uri uri) { // Must implemented if you implement query..
-        // Return a string that identifies the MIME type for a Content Provider URI.
+    public String getType(Uri uri) {
+        final String subType = "/vnd.example.todos";
         switch (uriMatcher.match(uri)) {
             case ALLROWS: {
-                return ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.example.todos";
+                return ContentResolver.CURSOR_DIR_BASE_TYPE + subType;
             }
             case SINGLE_ROW: {
-                return ContentResolver.CURSOR_ITEM_BASE_TYPE +  "/vnd.example.todos";
+                return ContentResolver.CURSOR_ITEM_BASE_TYPE +  subType;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
