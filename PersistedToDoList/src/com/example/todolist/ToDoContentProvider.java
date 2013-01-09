@@ -29,22 +29,22 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
     public static final String TODO_ITEMS_PATH = "todoitems";
-    public static final String TODO_ITEMS_PATH_FOR_ID = TODO_ITEMS_PATH + "/*";
+    public static final String TODO_ITEMS_PATH_FOR_ID = TODO_ITEMS_PATH + "/#";
 
     // Data path to the primary content.
     public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(TODO_ITEMS_PATH).build();
 
     // Maps a URI path to an integer.
     private static final UriMatcher uriMatcher;
-    private static final int ALLROWS = 1;
-    private static final int SINGLE_ROW = 2;
+    private static final int ALL_TODO_ITEMS = 1;
+    private static final int SINGLE_TODO_ITEM = 2;
 
     // URI ending in 'todoitems' corresponds to a request for all items
     // URI ending in 'todoitems/[rowID]' corresponds to a request for a single row.
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "todoitems", ALLROWS);
-        uriMatcher.addURI(AUTHORITY, "todoitems/#", SINGLE_ROW);
+        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, ALL_TODO_ITEMS);
+        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, SINGLE_TODO_ITEM);
     }
 
     // Practice is to create a public field for each column in the table.
@@ -63,7 +63,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, // projection is columns to include in result set
+    public Cursor query(Uri uri, String[] columns, String selection,
                         String[] selectionArgs, String sortOrder) {
         // Get readable instance to db (behind the scenes, creates db if necessary).
         final SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
@@ -76,7 +76,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row query, limit the result set to the passed in row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_ROW: {
+            case SINGLE_TODO_ITEM: {
                 String rowID = uri.getPathSegments().get(1);
                 queryBuilder.appendWhere(KEY_ID + "=" + rowID);
                 break;
@@ -87,7 +87,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         }
 
         // Execute the query.
-        final Cursor cursor = queryBuilder.query(db, projection, selection,
+        final Cursor cursor = queryBuilder.query(db, columns, selection,
                 selectionArgs, null, null, sortOrder);
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -105,11 +105,11 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     public String getType(Uri uri) {
         final String subType = "/vnd.example.todos";
         switch (uriMatcher.match(uri)) {
-            case ALLROWS: {
+            case ALL_TODO_ITEMS: {
                 return ContentResolver.CURSOR_DIR_BASE_TYPE + subType;
             }
-            case SINGLE_ROW: {
-                return ContentResolver.CURSOR_ITEM_BASE_TYPE +  subType;
+            case SINGLE_TODO_ITEM: {
+                return ContentResolver.CURSOR_ITEM_BASE_TYPE + subType;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -145,7 +145,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_ROW: {
+            case SINGLE_TODO_ITEM: {
                 String rowID = uri.getPathSegments().get(1);
                 selection = KEY_ID + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
@@ -172,7 +172,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_ROW: {
+            case SINGLE_TODO_ITEM: {
                 final String rowID = uri.getPathSegments().get(1);
                 selection = KEY_ID + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ?
