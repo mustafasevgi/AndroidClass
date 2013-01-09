@@ -36,20 +36,20 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
     // Maps a URI path to an integer.
     private static final UriMatcher uriMatcher;
-    private static final int ALL_TODO_ITEMS = 1;
-    private static final int SINGLE_TODO_ITEM = 2;
+    private static final int TODO_ITEMS_PATH_KEY = 1;
+    private static final int TODO_ITEMS_PATH_FOR_ID_KEY = 2;
 
     // URI ending in 'todoitems' corresponds to a request for all items
     // URI ending in 'todoitems/[rowID]' corresponds to a request for a single row.
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, ALL_TODO_ITEMS);
-        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, SINGLE_TODO_ITEM);
+        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, TODO_ITEMS_PATH_KEY);
+        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, TODO_ITEMS_PATH_FOR_ID_KEY);
     }
 
     // Practice is to create a public field for each column in the table.
-    public static final String KEY_ID = "_id";
-    public static final String KEY_TASK = "task";
+    public static final String ID_COLUMN = "_id";
+    public static final String TASK_COLUMN = "task";
 
     private ToDoDBSQLiteOpenHelper mDBOpenHelper;
 
@@ -76,9 +76,9 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row query, limit the result set to the passed in row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_TODO_ITEM: {
+            case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 String rowID = uri.getPathSegments().get(1);
-                queryBuilder.appendWhere(KEY_ID + "=" + rowID);
+                queryBuilder.appendWhere(ID_COLUMN + "=" + rowID);
                 break;
             }
             default: {
@@ -105,10 +105,10 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     public String getType(Uri uri) {
         final String subType = "/vnd.example.todos";
         switch (uriMatcher.match(uri)) {
-            case ALL_TODO_ITEMS: {
+            case TODO_ITEMS_PATH_KEY: {
                 return ContentResolver.CURSOR_DIR_BASE_TYPE + subType;
             }
-            case SINGLE_TODO_ITEM: {
+            case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 return ContentResolver.CURSOR_ITEM_BASE_TYPE + subType;
             }
             default: {
@@ -145,9 +145,9 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_TODO_ITEM: {
+            case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 String rowID = uri.getPathSegments().get(1);
-                selection = KEY_ID + "=" + rowID
+                selection = ID_COLUMN + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
                 break;
             }
@@ -172,9 +172,9 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (uriMatcher.match(uri)) {
-            case SINGLE_TODO_ITEM: {
+            case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 final String rowID = uri.getPathSegments().get(1);
-                selection = KEY_ID + "=" + rowID
+                selection = ID_COLUMN + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ?
                         " AND (" + selection + ')' : "");
                 break;
@@ -199,9 +199,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         return deleteCount;
     }
 
-    // SQLite is implemented as a library, rather than running as a separate process.
-    // Each SQLite database is an integrated part of the application that created it.
-    // SQLite is extremely reliable.
+    // SQLite DB is the backing store for this content provider.
     // SQLiteOpenHelper exposes query, insert, update, delete operations.
     private static class ToDoDBSQLiteOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "todo.db"; // Will be stored in /data/data/<package>/databases
@@ -215,8 +213,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // SQL statement to create a new database.
         private static final String CREATE_TABLE = "create table " + TABLE_NAME
-                + " (" + KEY_ID + " integer primary key autoincrement, "
-                + KEY_TASK + " text not null);";
+                + " (" + ID_COLUMN + " integer primary key autoincrement, "
+                + TASK_COLUMN + " text not null);";
 
         // Called when no database exists in disk.
         @Override

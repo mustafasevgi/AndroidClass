@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -65,7 +64,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         //  Each ContentValue represents a single table row
         //  as a map of column names to values.
         final ContentValues values = new ContentValues();
-        values.put(ToDoContentProvider.KEY_TASK, newItem);
+        values.put(ToDoContentProvider.TASK_COLUMN, newItem);
 
         // Content Provider data are consumed using a Content Resolver
         final ContentResolver cr = getContentResolver();
@@ -84,7 +83,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         mTodoItemsList.clear();
 
         // Gets index of the column given a name.
-        final int taskKeyIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.KEY_TASK);
+        final int taskKeyIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.TASK_COLUMN);
 
         // Database queries are returned as Cursor objects.
         // Cursors are pointers to the result set within the underlying data.
