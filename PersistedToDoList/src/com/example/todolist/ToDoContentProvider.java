@@ -204,7 +204,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     private static class ToDoDBSQLiteOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "todo.db"; // Will be stored in /data/data/<package>/databases
         private static final int DATABASE_VERSION = 1; // Important for upgrade paths
-        private static final String TASKS_TABLE_NAME = "todoItemTable";
+        private static final String TASKS_TABLE_NAME = "TodoItemsTable";
 
         public ToDoDBSQLiteOpenHelper(Context context, String name,
                                       CursorFactory factory, int version) {
