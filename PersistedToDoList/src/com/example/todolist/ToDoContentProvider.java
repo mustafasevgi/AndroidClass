@@ -8,9 +8,8 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -56,10 +55,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     @Override
     public boolean onCreate() {
         // Initialize the underlying data source.
-        mDBOpenHelper = new ToDoDBSQLiteOpenHelper(getContext(),
-                ToDoDBSQLiteOpenHelper.DATABASE_NAME, null,
-                ToDoDBSQLiteOpenHelper.DATABASE_VERSION);
-        return true;
+        mDBOpenHelper = new ToDoDBSQLiteOpenHelper(getContext());
+        return true; // true means provider was successfully loaded
     }
 
     @Override
@@ -204,15 +201,15 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     private static class ToDoDBSQLiteOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "todo.db"; // Will be stored in /data/data/<package>/databases
         private static final int DATABASE_VERSION = 1; // Important for upgrade paths
+
         private static final String TASKS_TABLE_NAME = "TodoItemsTable";
 
-        public ToDoDBSQLiteOpenHelper(Context context, String name,
-                                      CursorFactory factory, int version) {
-            super(context, name, factory, version);
+        public ToDoDBSQLiteOpenHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         // SQL statement to create a new database.
-        private static final String CREATE_TABLE = "CREATE TABLE " + TASKS_TABLE_NAME
+        private static final String CREATE_TODO_ITEMS_TABLE = "CREATE TABLE " + TASKS_TABLE_NAME
                 + " (" + ID_COLUMN   + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                        + TASK_COLUMN + " TEXT NOT NULL"
                 + ");";
@@ -220,7 +217,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         // Called when no database exists in disk.
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_TABLE);
+            db.execSQL(CREATE_TODO_ITEMS_TABLE);
         }
 
         // Called when the app database version mismatches the disk database version.
