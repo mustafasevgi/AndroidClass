@@ -144,8 +144,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         // If this is a row URI, limit the deletion to the specified row.
         switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_FOR_ID_TYPE: {
-                String rowID = uri.getPathSegments().get(1);
-                selection = ID_COLUMN + "=" + rowID
+                String rowId = uri.getPathSegments().get(1);
+                selection = ID_COLUMN + "=" + rowId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
                 break;
             }
@@ -158,7 +158,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final int updateCount = db.update(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME,
                 values, selection, selectionArgs);
 
-        // Notify  observers of the change in the data set.
+        // Notify observers of the change in the data set.
         getContext().getContentResolver().notifyChange(uri, null);
 
         return updateCount;
@@ -171,8 +171,8 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         // If this is a row URI, limit the deletion to the specified row.
         switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_FOR_ID_TYPE: {
-                final String rowID = uri.getPathSegments().get(1);
-                selection = ID_COLUMN + "=" + rowID
+                final String rowId = uri.getPathSegments().get(1);
+                selection = ID_COLUMN + "=" + rowId
                         + (!TextUtils.isEmpty(selection) ?
                         " AND (" + selection + ')' : "");
                 break;
