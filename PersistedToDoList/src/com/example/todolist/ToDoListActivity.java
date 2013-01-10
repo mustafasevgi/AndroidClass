@@ -50,7 +50,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         // Bind the array adapter to the ListView.
         todoListView.setAdapter(mToDoItemsAdapter);
 
-        // CusrorLoader ensures queries are performed asynchronously.
+        // CursorLoader ensures queries are performed asynchronously.
         getLoaderManager().initLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
@@ -76,7 +76,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         cr.insert(ToDoContentProvider.CONTENT_URI, value);
     }
 
-    // Called when the loader is initliazed.
+    // Called when the loader is initialized.
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, ToDoContentProvider.CONTENT_URI,
                 null, null, null, null);

@@ -1,7 +1,5 @@
 package com.example.todolist;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class ToDoItemAdapter extends ArrayAdapter<ToDoItem> {
-    private int mResource;
-    private LayoutInflater mInflator;
+    private final int mResource;
+    private final LayoutInflater mInflator;
 
     public ToDoItemAdapter(Context context, int resource, List<ToDoItem> items) {
         super(context, resource, items);
@@ -23,7 +23,7 @@ public class ToDoItemAdapter extends ArrayAdapter<ToDoItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = (LinearLayout) mInflator.inflate(mResource, null);
+            convertView = mInflator.inflate(mResource, null);
         }
         final LinearLayout todoView = (LinearLayout) convertView;
 
