@@ -35,15 +35,15 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
     // Maps a URI path to an integer.
     private static final UriMatcher mUriMatcher;
-    private static final int TODO_ITEMS_PATH_KEY = 1;
-    private static final int TODO_ITEMS_PATH_FOR_ID_KEY = 2;
+    private static final int TODO_ITEMS_PATH_TYPE = 1;
+    private static final int TODO_ITEMS_PATH_FOR_ID_TYPE = 2;
 
     // URI ending in 'todoitems' corresponds to a request for all items
     // URI ending in 'todoitems/[rowID]' corresponds to a request for a single row.
     static {
         mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, TODO_ITEMS_PATH_KEY);
-        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, TODO_ITEMS_PATH_FOR_ID_KEY);
+        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, TODO_ITEMS_PATH_TYPE);
+        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, TODO_ITEMS_PATH_FOR_ID_TYPE);
     }
 
     // Practice is to create a public field for each column in the table.
@@ -62,7 +62,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     @Override
     public Cursor query(Uri uri, String[] columns, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // Get readable instance to db (behind the scenes, creates db if necessary).
+        // Get readable instance to db
         final SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
 
         // SQLiteQueryBuilder is a helper to build row-based queries
@@ -73,9 +73,9 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row query, limit the result set to the passed in row.
         switch (mUriMatcher.match(uri)) {
-            case TODO_ITEMS_PATH_FOR_ID_KEY: {
-                String rowID = uri.getPathSegments().get(1);
-                queryBuilder.appendWhere(ID_COLUMN + "=" + rowID);
+            case TODO_ITEMS_PATH_FOR_ID_TYPE: {
+                String rowId = uri.getPathSegments().get(1);
+                queryBuilder.appendWhere(ID_COLUMN + "=" + rowId);
                 break;
             }
             default: {
@@ -102,10 +102,10 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     public String getType(Uri uri) {
         final String subType = "/vnd.example.todos";
         switch (mUriMatcher.match(uri)) {
-            case TODO_ITEMS_PATH_KEY: {
+            case TODO_ITEMS_PATH_TYPE: {
                 return ContentResolver.CURSOR_DIR_BASE_TYPE + subType;
             }
-            case TODO_ITEMS_PATH_FOR_ID_KEY: {
+            case TODO_ITEMS_PATH_FOR_ID_TYPE: {
                 return ContentResolver.CURSOR_ITEM_BASE_TYPE + subType;
             }
             default: {
@@ -116,22 +116,23 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
+        // Get writeable instance to db
+        final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase();
 
-        // Insert the row into the table
-        final long id = db.insert(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME, null, values);
+        switch (mUriMatcher.match(uri)) {
+            case TODO_ITEMS_PATH_TYPE: {
+                // Insert the row into the table
+                final long id = db.insert(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME, null, values);
+                // Notify any observers of the change in the data set.
+                getContext().getContentResolver().notifyChange(CONTENT_URI, null);
 
-        if (id > -1) {
-            // Construct and return the URI of the newly inserted row.
-            // ContentUris.withAppendedId appends the ID to the CONTENT_URI.
-            final Uri rowUri = ContentUris.withAppendedId(CONTENT_URI, id);
-
-            // Notify any observers of the change in the data set.
-            getContext().getContentResolver().notifyChange(CONTENT_URI, null);
-
-            return rowUri;
-        } else {
-            return null;
+                // Construct and return the URI of the newly inserted row.
+                // ContentUris.withAppendedId appends the ID to the CONTENT_URI.
+                return ContentUris.withAppendedId(CONTENT_URI, id);
+            }
+            default: {
+                throw new IllegalArgumentException("URI: " + uri + " is not supported");
+            }
         }
     }
 
@@ -142,7 +143,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (mUriMatcher.match(uri)) {
-            case TODO_ITEMS_PATH_FOR_ID_KEY: {
+            case TODO_ITEMS_PATH_FOR_ID_TYPE: {
                 String rowID = uri.getPathSegments().get(1);
                 selection = ID_COLUMN + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
@@ -169,7 +170,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
 
         // If this is a row URI, limit the deletion to the specified row.
         switch (mUriMatcher.match(uri)) {
-            case TODO_ITEMS_PATH_FOR_ID_KEY: {
+            case TODO_ITEMS_PATH_FOR_ID_TYPE: {
                 final String rowID = uri.getPathSegments().get(1);
                 selection = ID_COLUMN + "=" + rowID
                         + (!TextUtils.isEmpty(selection) ?
