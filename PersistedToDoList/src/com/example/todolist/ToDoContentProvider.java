@@ -13,9 +13,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-// - Provides an interface for publishing and consuming data,
-//   based around a simple URI addressing model using the
-//   content:// schema.
+// - Content Providers provides an abstraction from the underlying data source (e.g. SQLite database).
+// - Provides an interface for publishing and consuming data, based around a simple URI addressing
+//   model using the content:// schema.
 // - ContentProvider is a data access object (http://en.wikipedia.org/wiki/Data_access_object)
 // - Defined in manifest:
 //   Authorities tag define the base URI of the Provider’s authority.

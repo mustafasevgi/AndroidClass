@@ -66,8 +66,12 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         final ContentValues value = new ContentValues();
         value.put(ToDoContentProvider.TASK_COLUMN, newItem);
 
-        // Content Provider data are consumed using a Content Resolver
+        // Content Resolver provides access to your (and other applications') content providers.
+        // It accepts requests from clients and resolves these requests by directing them to the
+        // content provider with the given authority.
         final ContentResolver cr = getContentResolver();
+
+        // Content Resolver includes the CRUD (create, read, update, delete) methods.
         // The URI specifies the content provider.
         cr.insert(ToDoContentProvider.CONTENT_URI, value);
     }
