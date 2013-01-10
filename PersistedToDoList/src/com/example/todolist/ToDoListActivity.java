@@ -1,7 +1,5 @@
 package com.example.todolist;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
@@ -14,6 +12,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class ToDoListActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -41,16 +41,16 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         // Get references to the ListView
         final ListView todoListView = (ListView) findViewById(R.id.todos);
 
-        // Create the array list of to do items
+        // Create list of to do items.
         mTodoItemsList = new ArrayList<ToDoItem>();
 
-        // Create the array adapter to bind the array to the ListView
+        // Create array adapter to bind the array to the ListView.
         mToDoItemsAdapter = new ToDoItemAdapter(this, R.layout.todolist_item, mTodoItemsList);
 
         // Bind the array adapter to the ListView.
         todoListView.setAdapter(mToDoItemsAdapter);
 
-        // CusrorLoader ensure queries are performed asynchronously.
+        // CusrorLoader ensures queries are performed asynchronously.
         getLoaderManager().initLoader(0, null, this); // Third parameter is reference to callbacks
     }
 
@@ -63,13 +63,13 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
     public void onNewItemAdded(String newItem) {
         //  Each ContentValue represents a single table row
         //  as a map of column names to values.
-        final ContentValues values = new ContentValues();
-        values.put(ToDoContentProvider.TASK_COLUMN, newItem);
+        final ContentValues value = new ContentValues();
+        value.put(ToDoContentProvider.TASK_COLUMN, newItem);
 
         // Content Provider data are consumed using a Content Resolver
         final ContentResolver cr = getContentResolver();
         // The URI specifies the content provider.
-        cr.insert(ToDoContentProvider.CONTENT_URI, values);
+        cr.insert(ToDoContentProvider.CONTENT_URI, value);
     }
 
     // Called when the loader is initliazed.
@@ -83,15 +83,17 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         mTodoItemsList.clear();
 
         // Gets index of the column given a name.
-        final int taskKeyIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.TASK_COLUMN);
+        final int taskColumnIndex = cursor.getColumnIndexOrThrow(ToDoContentProvider.TASK_COLUMN);
 
         // Database queries are returned as Cursor objects.
         // Cursors are pointers to the result set within the underlying data.
-        // Here is how we iterate over the cursor rows.
+        // Here is how to iterate over the cursor rows.
         while (cursor.moveToNext()) { // Moves cursor to next row, cursor is initialized at before first.
-            final ToDoItem newItem = new ToDoItem(cursor.getString(taskKeyIndex)); // Extract column data from cursor
-            mTodoItemsList.add(newItem);
+            final String todo = cursor.getString(taskColumnIndex); // Extract column data from cursor.
+            mTodoItemsList.add(new ToDoItem(todo));
         }
+
+        // Notify adapter that backing data has changed.
         mToDoItemsAdapter.notifyDataSetChanged();
     }
 

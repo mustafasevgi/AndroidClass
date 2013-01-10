@@ -53,7 +53,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     private ToDoDBSQLiteOpenHelper mDBOpenHelper;
 
     @Override
-    public boolean onCreate() {
+    public boolean onCreate() { // Called when provider is instantiated.
         // Initialize the underlying data source.
         mDBOpenHelper = new ToDoDBSQLiteOpenHelper(getContext());
         return true; // true means provider was successfully loaded
