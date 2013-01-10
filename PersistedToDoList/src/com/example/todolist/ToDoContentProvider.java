@@ -212,9 +212,10 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         }
 
         // SQL statement to create a new database.
-        private static final String CREATE_TABLE = "create table " + TABLE_NAME
-                + " (" + ID_COLUMN + " integer primary key autoincrement, "
-                + TASK_COLUMN + " text not null);";
+        private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME
+                + " (" + ID_COLUMN   + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                       + TASK_COLUMN + " TEXT NOT NULL"
+                + ");";
 
         // Called when no database exists in disk.
         @Override
