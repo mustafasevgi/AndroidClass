@@ -72,7 +72,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         // Specify the table on which to perform the query.
-        queryBuilder.setTables(ToDoDBSQLiteOpenHelper.TABLE_NAME);
+        queryBuilder.setTables(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME);
 
         // If this is a row query, limit the result set to the passed in row.
         switch (uriMatcher.match(uri)) {
@@ -122,7 +122,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // Insert the row into the table
-        final long id = db.insert(ToDoDBSQLiteOpenHelper.TABLE_NAME, null, values);
+        final long id = db.insert(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME, null, values);
 
         if (id > -1) {
             // Construct and return the URI of the newly inserted row.
@@ -157,7 +157,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         }
 
         // Perform the update on row(s) matching the selection.
-        final int updateCount = db.update(ToDoDBSQLiteOpenHelper.TABLE_NAME,
+        final int updateCount = db.update(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME,
                 values, selection, selectionArgs);
 
         // Notify  observers of the change in the data set.
@@ -191,7 +191,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         }
 
         // Delete the row(s) matching the selection.
-        int deleteCount = db.delete(ToDoDBSQLiteOpenHelper.TABLE_NAME, selection, selectionArgs);
+        int deleteCount = db.delete(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME, selection, selectionArgs);
 
         // Notify any observers of the change in the data set.
         getContext().getContentResolver().notifyChange(uri, null);
@@ -204,7 +204,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     private static class ToDoDBSQLiteOpenHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "todo.db"; // Will be stored in /data/data/<package>/databases
         private static final int DATABASE_VERSION = 1; // Important for upgrade paths
-        private static final String TABLE_NAME = "todoItemTable";
+        private static final String TASKS_TABLE_NAME = "todoItemTable";
 
         public ToDoDBSQLiteOpenHelper(Context context, String name,
                                       CursorFactory factory, int version) {
@@ -212,7 +212,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         }
 
         // SQL statement to create a new database.
-        private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME
+        private static final String CREATE_TABLE = "CREATE TABLE " + TASKS_TABLE_NAME
                 + " (" + ID_COLUMN   + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                        + TASK_COLUMN + " TEXT NOT NULL"
                 + ");";
@@ -228,7 +228,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // The simplest case is to drop the old table and create a new one.
-            db.execSQL("DROP TABLE IF IT EXISTS " + TABLE_NAME); // Migrate existing data if necessary before this.
+            db.execSQL("DROP TABLE IF IT EXISTS " + TASKS_TABLE_NAME); // Migrate existing data if necessary before this.
             // Create a new one.
             onCreate(db);
         }
