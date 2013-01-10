@@ -34,16 +34,16 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(TODO_ITEMS_PATH).build();
 
     // Maps a URI path to an integer.
-    private static final UriMatcher uriMatcher;
+    private static final UriMatcher mUriMatcher;
     private static final int TODO_ITEMS_PATH_KEY = 1;
     private static final int TODO_ITEMS_PATH_FOR_ID_KEY = 2;
 
     // URI ending in 'todoitems' corresponds to a request for all items
     // URI ending in 'todoitems/[rowID]' corresponds to a request for a single row.
     static {
-        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, TODO_ITEMS_PATH_KEY);
-        uriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, TODO_ITEMS_PATH_FOR_ID_KEY);
+        mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH, TODO_ITEMS_PATH_KEY);
+        mUriMatcher.addURI(AUTHORITY, TODO_ITEMS_PATH_FOR_ID, TODO_ITEMS_PATH_FOR_ID_KEY);
     }
 
     // Practice is to create a public field for each column in the table.
@@ -72,7 +72,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         queryBuilder.setTables(ToDoDBSQLiteOpenHelper.TASKS_TABLE_NAME);
 
         // If this is a row query, limit the result set to the passed in row.
-        switch (uriMatcher.match(uri)) {
+        switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 String rowID = uri.getPathSegments().get(1);
                 queryBuilder.appendWhere(ID_COLUMN + "=" + rowID);
@@ -101,7 +101,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
     @Override
     public String getType(Uri uri) {
         final String subType = "/vnd.example.todos";
-        switch (uriMatcher.match(uri)) {
+        switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_KEY: {
                 return ContentResolver.CURSOR_DIR_BASE_TYPE + subType;
             }
@@ -141,7 +141,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // If this is a row URI, limit the deletion to the specified row.
-        switch (uriMatcher.match(uri)) {
+        switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 String rowID = uri.getPathSegments().get(1);
                 selection = ID_COLUMN + "=" + rowID
@@ -168,7 +168,7 @@ public class ToDoContentProvider extends ContentProvider { // Abstracts the unde
         final SQLiteDatabase db = mDBOpenHelper.getWritableDatabase(); // Get writeable instance to db
 
         // If this is a row URI, limit the deletion to the specified row.
-        switch (uriMatcher.match(uri)) {
+        switch (mUriMatcher.match(uri)) {
             case TODO_ITEMS_PATH_FOR_ID_KEY: {
                 final String rowID = uri.getPathSegments().get(1);
                 selection = ID_COLUMN + "=" + rowID
