@@ -50,6 +50,7 @@ public class ToDoListActivity extends Activity implements LoaderManager.LoaderCa
         // Bind the array adapter to the ListView.
         todoListView.setAdapter(mToDoItemsAdapter);
 
+        // LoaderManager manages loaders associated with an Activity or a Fragment.
         // CursorLoader ensures queries are performed asynchronously.
         getLoaderManager().initLoader(0, null, this); // Third parameter is reference to callbacks
     }
